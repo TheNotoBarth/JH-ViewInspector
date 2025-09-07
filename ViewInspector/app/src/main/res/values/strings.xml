@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">View Inspector</string>
+    <string name="accessibility_service_description">用于获取当前页面控件信息，支持悬浮窗查看和筛选功能</string>
+    
+    <!-- 主页面 -->
+    <string name="title_activity_main">View Inspector</string>
+    <string name="filter_text_hint">输入文本进行筛选</string>
+    <string name="filter_clickable_only">仅显示可点击控件</string>
+    <string name="refresh_button">刷新控件信息</string>
+    <string name="start_floating_button">启动悬浮窗</string>
+    <string name="empty_message">暂无控件信息\n\n请先启用无障碍服务并刷新</string>
+    
+    <!-- 通知 -->
+    <string name="notification_title">View Inspector</string>
+    <string name="notification_text">悬浮窗服务正在运行</string>
+    
+    <!-- 权限提示 -->
+    <string name="accessibility_service_required">请启用无障碍服务</string>
+    <string name="overlay_permission_required">需要悬浮窗权限</string>
+    <string name="permission_granted">权限已授予</string>
+    <string name="permission_denied">权限被拒绝</string>
+</resources>

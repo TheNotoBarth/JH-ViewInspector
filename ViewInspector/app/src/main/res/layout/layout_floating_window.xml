@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="400dp"
+    android:orientation="vertical"
+    android:background="#E6FFFFFF"
+    android:elevation="8dp"
+    android:padding="8dp">
+
+    <!-- 标题栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="4dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="控件信息"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/refresh_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="刷新"
+            android:textSize="12sp"
+            android:backgroundTint="#2196F3"
+            android:textColor="@android:color/white"
+            android:paddingHorizontal="8dp"
+            android:layout_marginEnd="4dp" />
+
+        <Button
+            android:id="@+id/close_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="关闭"
+            android:textSize="12sp"
+            android:backgroundTint="#F44336"
+            android:textColor="@android:color/white"
+            android:paddingHorizontal="8dp" />
+
+    </LinearLayout>
+
+    <!-- 信息内容 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="4dp"
+        android:background="#FFFFFF"
+        android:padding="4dp">
+
+        <TextView
+            android:id="@+id/info_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="正在获取控件信息..."
+            android:textColor="#000000"
+            android:textSize="12sp"
+            android:fontFamily="monospace"
+            android:lineSpacingExtra="2dp" />
+
+    </ScrollView>
+
+</LinearLayout>
