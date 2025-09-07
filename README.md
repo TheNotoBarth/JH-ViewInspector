@@ -64,8 +64,8 @@
 
 1. 克隆项目
 ```bash
-git clone [项目地址]
-cd viewinspector
+git clone https://github.com/TheNotoBarth/JH-ViewInspector.git
+cd JH-ViewInspector
 ```
 
 2. 使用Android Studio打开项目
@@ -84,7 +84,7 @@ cd viewinspector
 
 如有问题或建议，请通过以下方式联系：
 
-- 提交 [Issue]([项目Issues地址])
+- 提交 [Issue](https://github.com/TheNotoBarth/JH-ViewInspector/issues)
 - 发送邮件: 1591943735@qq.com
 
 ---
