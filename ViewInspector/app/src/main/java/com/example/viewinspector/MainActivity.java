@@ -98,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         
         if (id == R.id.action_language) {
-            // 直接切换语言，不显示对话框
             String newLanguage = currentLanguage.equals("zh") ? "en" : "zh";
             currentLanguage = newLanguage;
             setAppLanguage(currentLanguage);
