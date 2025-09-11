@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">View Inspector</string>
+    <string name="accessibility_service_description">Used to get current page control information, supports floating window viewing and filtering functions</string>
+    
+    <!-- Main Page -->
+    <string name="title_activity_main">View Inspector</string>
+    <string name="filter_text_hint">Enter text to filter</string>
+    <string name="filter_clickable_only">Show clickable controls only</string>
+    <string name="refresh_button">Refresh Control Info</string>
+    <string name="start_floating_button">Start Floating Window</string>
+    <string name="empty_message">No control information available\n\nPlease enable accessibility service and refresh first</string>
+    
+    <!-- Notifications -->
+    <string name="notification_title">View Inspector</string>
+    <string name="notification_text">Floating window service is running</string>
+    
+    <!-- Permission Prompts -->
+    <string name="accessibility_service_required">Please enable accessibility service</string>
+    <string name="overlay_permission_required">Overlay permission required</string>
+    <string name="permission_granted">Permission granted</string>
+    <string name="permission_denied">Permission denied</string>
+    
+    <!-- Language Settings -->
+    <string name="language_settings">Language</string>
+    <string name="language_chinese">Chinese</string>
+    <string name="language_english">English</string>
+    <string name="language_switch">中文/English</string>
+    <string name="filter_conditions">Filter Conditions</string>
+    <string name="clickable">Clickable</string>
+    <string name="enabled">Enabled</string>
+    <string name="focusable">Focusable</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="total_controls">Total Controls: %1$d</string>
+    <string name="accessibility_service_not_running">Accessibility service is not running, please enable it in system settings first</string>
+    <string name="no_control_info_try_again">No control information available\n\nPlease try clicking refresh button or switching to other apps</string>
+    <string name="accessibility_service_connecting">Accessibility service connecting, please try again later</string>
+    <string name="please_click_refresh">Please click the refresh button or the refresh button in the floating window to get control information</string>
+    <string name="please_grant_overlay_permission">Please grant overlay permission first</string>
+    <string name="please_enable_accessibility_first">Please enable accessibility service first</string>
+    <string name="floating_window_service_started">Floating window service started</string>
+    <string name="overlay_permission_granted">Overlay permission granted</string>
+    <string name="overlay_permission_needed">Overlay permission is required to use this feature</string>
+    
+    <!-- Floating Window -->
+    <string name="control_info">Control Info</string>
+    <string name="refresh">Refresh</string>
+    <string name="close">Close</string>
+    <string name="getting_control_info">Getting control information...</string>
+    
+    <!-- Floating Window Service -->
+    <string name="total_controls_count">Total Controls: %1$d</string>
+    <string name="clickable_controls_count">Clickable Controls: %1$d</string>
+    <string name="return_to_app_for_details">Return to APP for detailed control information</string>
+    <string name="accessibility_service_not_running_floating">Accessibility service is not running\nPlease enable it in system settings first</string>
+</resources>

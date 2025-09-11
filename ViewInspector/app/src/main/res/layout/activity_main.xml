@@ -8,12 +8,13 @@
 
     <!-- 标题栏 -->
     <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:title="View Inspector"
+        app:title="@string/app_name"
         app:titleTextColor="@android:color/white" />
 
     <!-- 控制面板 -->
@@ -29,7 +30,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="筛选条件"
+            android:text="@string/filter_conditions"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="#333333"
@@ -39,7 +40,7 @@
             android:id="@+id/text_filter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="输入文本进行筛选"
+            android:hint="@string/filter_text_hint"
             android:inputType="text"
             android:padding="12dp"
             android:background="@drawable/edit_text_background"
@@ -49,7 +50,7 @@
             android:id="@+id/clickable_filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="仅显示可点击控件"
+            android:text="@string/filter_clickable_only"
             android:textSize="14sp"
             android:layout_marginBottom="8dp" />
 
@@ -64,7 +65,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="刷新控件信息"
+                android:text="@string/refresh_button"
                 android:textColor="@android:color/white"
                 android:backgroundTint="#2196F3"
                 android:layout_marginEnd="4dp" />
@@ -74,7 +75,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="启动悬浮窗"
+                android:text="@string/start_floating_button"
                 android:textColor="@android:color/white"
                 android:backgroundTint="#4CAF50"
                 android:layout_marginStart="4dp" />
@@ -116,7 +117,7 @@
         android:id="@+id/empty_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="暂无控件信息\n\n请先启用无障碍服务并刷新"
+        android:text="@string/empty_message"
         android:textSize="16sp"
         android:textColor="#757575"
         android:gravity="center"

@@ -4,10 +4,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -38,8 +42,10 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox clickableFilterCheckBox;
     private Button refreshButton;
     private Button startFloatingButton;
+    private androidx.appcompat.widget.Toolbar toolbar;
     
     private List<ViewInfo> allViewInfos = new ArrayList<>();
+    private String currentLanguage = "zh"; // 默认中文
     
     private final ActivityResultLauncher<Intent> accessibilitySettingsLauncher = 
         registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -53,6 +59,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         instance = this;
+        
+        // 加载语言设置
+        loadLanguageSetting();
+        
         setContentView(R.layout.activity_main);
         
         initViews();
@@ -77,6 +87,77 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(refreshReceiver, filter);
     }
     
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        
+        if (id == R.id.action_language) {
+            // 直接切换语言，不显示对话框
+            String newLanguage = currentLanguage.equals("zh") ? "en" : "zh";
+            currentLanguage = newLanguage;
+            setAppLanguage(currentLanguage);
+            recreate(); // 重新创建活动以应用新语言
+            return true;
+        }
+        
+        return super.onOptionsItemSelected(item);
+    }
+    
+    private void showLanguageDialog() {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        builder.setTitle(R.string.language_settings);
+        
+        String[] languages = {getString(R.string.language_chinese), getString(R.string.language_english)};
+        int checkedItem = currentLanguage.equals("zh") ? 0 : 1;
+        
+        builder.setSingleChoiceItems(languages, checkedItem, (dialog, which) -> {
+            String selectedLanguage = which == 0 ? "zh" : "en";
+            if (!selectedLanguage.equals(currentLanguage)) {
+                currentLanguage = selectedLanguage;
+                setAppLanguage(currentLanguage);
+                recreate(); // 重新创建活动以应用新语言
+            }
+            dialog.dismiss();
+        });
+        
+        builder.show();
+    }
+    
+    private void setAppLanguage(String languageCode) {
+        Resources resources = getResources();
+        Configuration config = resources.getConfiguration();
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            config.setLocale(new java.util.Locale(languageCode));
+        } else {
+            config.locale = new java.util.Locale(languageCode);
+        }
+        
+        resources.updateConfiguration(config, resources.getDisplayMetrics());
+        
+        // 保存语言设置到SharedPreferences
+        android.content.SharedPreferences prefs = getSharedPreferences("AppSettings", MODE_PRIVATE);
+        android.content.SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("app_language", languageCode);
+        editor.apply();
+    }
+    
+    private void loadLanguageSetting() {
+        android.content.SharedPreferences prefs = getSharedPreferences("AppSettings", MODE_PRIVATE);
+        String savedLanguage = prefs.getString("app_language", "zh"); // 默认中文
+        
+        if (!savedLanguage.equals(currentLanguage)) {
+            currentLanguage = savedLanguage;
+            setAppLanguage(currentLanguage);
+        }
+    }
+    
     private void initViews() {
         scrollView = findViewById(R.id.scroll_view);
         infoTextView = findViewById(R.id.info_text_view);
@@ -85,6 +166,9 @@ public class MainActivity extends AppCompatActivity {
         clickableFilterCheckBox = findViewById(R.id.clickable_filter);
         refreshButton = findViewById(R.id.refresh_button);
         startFloatingButton = findViewById(R.id.start_floating_button);
+        toolbar = findViewById(R.id.toolbar);
+        
+        setSupportActionBar(toolbar);
     }
     
     private void setupListeners() {
@@ -117,12 +201,12 @@ public class MainActivity extends AppCompatActivity {
     
     private void checkAccessibilityService() {
         if (!ViewInspectorAccessibilityService.isServiceEnabled(this)) {
-            Toast.makeText(this, "请启用无障碍服务", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.accessibility_service_required, Toast.LENGTH_LONG).show();
             Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
             accessibilitySettingsLauncher.launch(intent);
         } else {
             // 提示用户现在需要手动刷新
-            Toast.makeText(this, "请点击刷新按钮或悬浮窗的刷新按钮获取控件信息", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.please_click_refresh, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -146,10 +230,10 @@ public class MainActivity extends AppCompatActivity {
     
     private void refreshViewInfo() {
         if (!ViewInspectorAccessibilityService.isServiceEnabled(this)) {
-            Toast.makeText(this, "无障碍服务未运行，请先在系统设置中启用", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.accessibility_service_not_running, Toast.LENGTH_SHORT).show();
             scrollView.setVisibility(View.GONE);
             emptyView.setVisibility(View.VISIBLE);
-            emptyView.setText("暂无控件信息\n\n请先启用无障碍服务并点击刷新按钮");
+            emptyView.setText(R.string.empty_message);
             return;
         }
         
@@ -161,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
             if (allViewInfos.isEmpty()) {
                 scrollView.setVisibility(View.GONE);
                 emptyView.setVisibility(View.VISIBLE);
-                emptyView.setText("暂无控件信息\n\n请尝试点击刷新按钮或切换到其他应用");
+                emptyView.setText(R.string.no_control_info_try_again);
             } else {
                 emptyView.setVisibility(View.GONE);
                 scrollView.setVisibility(View.VISIBLE);
@@ -177,13 +261,13 @@ public class MainActivity extends AppCompatActivity {
                     if (allViewInfos.isEmpty()) {
                         scrollView.setVisibility(View.GONE);
                         emptyView.setVisibility(View.VISIBLE);
-                        emptyView.setText("暂无控件信息\n\n请尝试点击刷新按钮或切换到其他应用");
+                        emptyView.setText(R.string.no_control_info_try_again);
                     } else {
                         emptyView.setVisibility(View.GONE);
                         scrollView.setVisibility(View.VISIBLE);
                     }
                 } else {
-                    Toast.makeText(this, "无障碍服务连接中，请稍后重试", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.accessibility_service_connecting, Toast.LENGTH_SHORT).show();
                 }
             }, 1000);
         }
@@ -214,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
         if (viewInfos.isEmpty()) {
             scrollView.setVisibility(View.GONE);
             emptyView.setVisibility(View.VISIBLE);
-            emptyView.setText("暂无控件信息\n\n请尝试点击刷新按钮或切换到其他应用");
+            emptyView.setText(R.string.no_control_info_try_again);
             return;
         }
         
@@ -222,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
         emptyView.setVisibility(View.GONE);
         
         StringBuilder sb = new StringBuilder();
-        sb.append("<b>控件总数: ").append(viewInfos.size()).append("</b><br><br>");
+        sb.append("<b>").append(getString(R.string.total_controls, viewInfos.size())).append("</b><br><br>");
         
         for (ViewInfo info : viewInfos) {
             // 构建树形结构缩进，使用HTML的非断空格
@@ -256,10 +340,16 @@ public class MainActivity extends AppCompatActivity {
                 sb.append(" <font color='#FF6F00'>#").append(info.viewId).append("</font>");
             }
             
-            // 属性状态（绿色/红色）- 使用中文显示
-            sb.append(" <font color='").append(info.isClickable ? "#4CAF50" : "#F44336").append("'>点击：").append(info.isClickable ? "是" : "否").append("</font>");
-            sb.append(" <font color='").append(info.isEnabled ? "#4CAF50" : "#F44336").append("'>可用：").append(info.isEnabled ? "是" : "否").append("</font>");
-            sb.append(" <font color='").append(info.isFocusable ? "#4CAF50" : "#F44336").append("'>聚焦：").append(info.isFocusable ? "是" : "否").append("</font>");
+            // 属性状态（绿色/红色）
+            sb.append(" <font color='").append(info.isClickable ? "#4CAF50" : "#F44336").append("'>")
+              .append(getString(R.string.clickable)).append(":").append(info.isClickable ? getString(R.string.yes) : getString(R.string.no))
+              .append("</font>");
+            sb.append(" <font color='").append(info.isEnabled ? "#4CAF50" : "#F44336").append("'>")
+              .append(getString(R.string.enabled)).append(":").append(info.isEnabled ? getString(R.string.yes) : getString(R.string.no))
+              .append("</font>");
+            sb.append(" <font color='").append(info.isFocusable ? "#4CAF50" : "#F44336").append("'>")
+              .append(getString(R.string.focusable)).append(":").append(info.isFocusable ? getString(R.string.yes) : getString(R.string.no))
+              .append("</font>");
             
             // 位置（青色）
             sb.append(" <font color='#0097A7'>").append(info.bounds).append("</font>");
@@ -273,12 +363,12 @@ public class MainActivity extends AppCompatActivity {
     private void startFloatingService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && 
             !Settings.canDrawOverlays(this)) {
-            Toast.makeText(this, "请先授予悬浮窗权限", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.please_grant_overlay_permission, Toast.LENGTH_SHORT).show();
             return;
         }
         
         if (!ViewInspectorAccessibilityService.isServiceEnabled(this)) {
-            Toast.makeText(this, "请先启用无障碍服务", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.please_enable_accessibility_first, Toast.LENGTH_SHORT).show();
             return;
         }
         
@@ -289,7 +379,7 @@ public class MainActivity extends AppCompatActivity {
             startService(serviceIntent);
         }
         
-        Toast.makeText(this, "悬浮窗服务已启动", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.floating_window_service_started, Toast.LENGTH_SHORT).show();
     }
     
     @Override
@@ -298,9 +388,9 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && 
                 Settings.canDrawOverlays(this)) {
-                Toast.makeText(this, "悬浮窗权限已授予", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.overlay_permission_granted, Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "需要悬浮窗权限才能使用此功能", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.overlay_permission_needed, Toast.LENGTH_SHORT).show();
             }
         }
     }

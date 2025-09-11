@@ -6,6 +6,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.IBinder;
@@ -20,6 +23,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+
+import com.example.viewinspector.R;
 
 import java.util.List;
 
@@ -41,6 +46,10 @@ public class ViewInspectorFloatingService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        
+        // 设置服务语言
+        setServiceLanguage();
+        
         startForegroundService();
         initFloatingWindow();
     }
@@ -56,6 +65,24 @@ public class ViewInspectorFloatingService extends Service {
         if (floatingView != null && windowManager != null) {
             windowManager.removeView(floatingView);
         }
+    }
+
+    private void setServiceLanguage() {
+        // 读取应用的语言设置
+        SharedPreferences prefs = getSharedPreferences("AppSettings", MODE_PRIVATE);
+        String languageCode = prefs.getString("app_language", "zh"); // 默认中文
+        
+        // 设置服务语言
+        Resources resources = getResources();
+        Configuration config = resources.getConfiguration();
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            config.setLocale(new java.util.Locale(languageCode));
+        } else {
+            config.locale = new java.util.Locale(languageCode);
+        }
+        
+        resources.updateConfiguration(config, resources.getDisplayMetrics());
     }
 
     @Nullable
@@ -129,9 +156,11 @@ public class ViewInspectorFloatingService extends Service {
             }
             
             StringBuilder sb = new StringBuilder();
-            sb.append("总控件数: ").append(viewInfos.size());
-            sb.append(" 可点击控件数: ").append(clickableCount);
-            sb.append("\n返回APP查看控件详细信息");
+            sb.append(getString(R.string.total_controls_count, viewInfos.size()));
+            sb.append(" ");
+            sb.append(getString(R.string.clickable_controls_count, clickableCount));
+            sb.append("\n");
+            sb.append(getString(R.string.return_to_app_for_details));
             
             infoTextView.setText(sb.toString());
             
@@ -140,8 +169,8 @@ public class ViewInspectorFloatingService extends Service {
             sendBroadcast(refreshIntent);
             
         } else {
-            infoTextView.setText("无障碍服务未运行\n请先在系统设置中启用");
-            Toast.makeText(this, "请先启用无障碍服务", Toast.LENGTH_SHORT).show();
+            infoTextView.setText(R.string.accessibility_service_not_running_floating);
+            Toast.makeText(this, R.string.accessibility_service_required, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -153,8 +182,8 @@ public class ViewInspectorFloatingService extends Service {
                 notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("View Inspector")
-                .setContentText("悬浮窗服务正在运行")
+                .setContentTitle(getString(R.string.notification_title))
+                .setContentText(getString(R.string.notification_text))
                 .setSmallIcon(android.R.drawable.ic_menu_info_details)
                 .setContentIntent(pendingIntent)
                 .build();
@@ -166,7 +195,7 @@ public class ViewInspectorFloatingService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
-                    "View Inspector",
+                    getString(R.string.notification_title),
                     NotificationManager.IMPORTANCE_DEFAULT
             );
             

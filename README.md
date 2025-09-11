@@ -1,5 +1,9 @@
 # JH-ViewInspector
 
+<p align="center">
+  <strong>中文</strong> | <a href="README_EN.md">English</a>
+</p>
+
 一个用于获取任意Android应用控件id的简易APP，通过无障碍服务+悬浮窗获取任意页面的控件层级结构和详细信息，支持筛选功能。
 
 ## ✨ 功能特性
